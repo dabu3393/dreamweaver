@@ -1,6 +1,7 @@
 // app/(tabs)/_layout.tsx
 
 import { Tabs } from 'expo-router';
+import { Text } from 'react-native';
 import { colors } from '@/constants/theme';
 
 export default function TabLayout() {
@@ -36,7 +37,6 @@ export default function TabLayout() {
 
 function TabIcon({ emoji, color }: { emoji: string; color: string }) {
   return (
-    // @ts-ignore — emoji as tab icon, fine for now
-    <text style={{ fontSize: 18, opacity: color === colors.gold ? 1 : 0.5 }}>{emoji}</text>
+    <Text style={{ fontSize: 18, opacity: color === colors.gold ? 1 : 0.5 }}>{emoji}</Text>
   );
 }

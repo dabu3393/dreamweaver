@@ -50,35 +50,28 @@ export function Card({ variant = 'default', padding = 'md', onPress, children, s
   const shadow = shadowByVariant[variant];
   const border = borderByVariant[variant];
 
+  // On iOS, overflow:hidden clips shadows. So we use two layers:
+  // - Outer Animated.View: carries the shadow + border radius, no overflow clip
+  // - Inner View: clips content with overflow:hidden
   const inner = (
     <Animated.View
       style={[
-        styles.base,
+        styles.shadowWrapper,
+        styles[`bg_${variant}`],
         border,
         shadow,
-        paddingStyles[padding],
-        variant === 'gold' && styles.goldBg,
-        variant === 'elevated' && styles.elevatedBg,
         { transform: [{ scale }, { translateY }] },
         style,
       ]}
     >
-      {/* Gold ✦ corner accent */}
-      {variant === 'gold' && (
-        <Text style={styles.goldAccent}>✦</Text>
-      )}
+      <View style={[styles.clipWrapper, paddingStyles[padding]]}>
+        {/* Gold ✦ corner accent */}
+        {variant === 'gold' && (
+          <Text style={styles.goldAccent}>✦</Text>
+        )}
 
-      {/* Aurora glow edge (elevated card) */}
-      {variant === 'elevated' && (
-        <View style={styles.auroraGlow} pointerEvents="none" />
-      )}
-
-      {/* Top inner highlight */}
-      {(variant === 'default' || variant === 'story') && (
-        <View style={styles.topHighlight} pointerEvents="none" />
-      )}
-
-      {children}
+        {children}
+      </View>
     </Animated.View>
   );
 
@@ -157,31 +150,31 @@ const borderByVariant: Record<Variant, ViewStyle> = {
 const shadowByVariant: Record<Variant, ViewStyle> = {
   default: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowRadius: 4,
-    shadowOpacity: 0.4,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
+    shadowOpacity: 0.5,
+    elevation: 3,
   },
   story: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 16,
-    shadowOpacity: 0.55,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 6 },
+    shadowRadius: 20,
+    shadowOpacity: 0.6,
+    elevation: 8,
   },
   elevated: {
-    shadowColor: colors.aurora,
-    shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 20,
-    shadowOpacity: 0.18,
-    elevation: 8,
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowRadius: 0,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   gold: {
     shadowColor: colors.gold,
     shadowOffset: { width: 0, height: 4 },
-    shadowRadius: 24,
-    shadowOpacity: 0.25,
-    elevation: 8,
+    shadowRadius: 14,
+    shadowOpacity: 0.35,
+    elevation: 10,
   },
 };
 
@@ -193,33 +186,31 @@ const paddingStyles = StyleSheet.create({
 });
 
 const styles = StyleSheet.create({
-  base: {
-    backgroundColor: colors.dusk,
+  // Outer wrapper — holds shadow, NO overflow clip
+  shadowWrapper: {
+    borderRadius: radii.lg,
+  },
+  // Inner wrapper — clips content, overflow hidden
+  clipWrapper: {
     borderRadius: radii.lg,
     overflow: 'hidden',
     position: 'relative',
   },
-  goldBg: {
-    backgroundColor: '#1A1506',
-  },
-  elevatedBg: {
-    backgroundColor: colors.twilight,
-  },
+
+  // Background per variant (must be on shadowWrapper so shadow color shows)
+  bg_default:  { backgroundColor: colors.dusk },
+  bg_story:    { backgroundColor: colors.dusk },
+  bg_elevated: { backgroundColor: colors.twilight },
+  bg_gold:     { backgroundColor: '#1A1506' },
 
   // Decorative overlays
-  topHighlight: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0,
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    zIndex: 1,
-  },
   auroraGlow: {
     position: 'absolute',
-    top: -20, left: -20, right: -20,
-    height: 60,
-    backgroundColor: 'rgba(155,127,255,0.06)',
-    borderRadius: 40,
+    bottom: -10,
+    left: 0,
+    right: 0,
+    height: 50,
+    backgroundColor: 'rgba(245,200,66,0.07)',
     zIndex: 0,
   },
   goldAccent: {
