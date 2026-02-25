@@ -1,17 +1,19 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet } from 'react-native';
+// app/+not-found.tsx
 
-import { Text, View } from '@/components/Themed';
+import { View, Text, StyleSheet } from 'react-native';
+import { Link, Stack } from 'expo-router';
+import { colors, fonts, fontSizes, spacing } from '@/constants/theme';
 
 export default function NotFoundScreen() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
+      <Stack.Screen options={{ title: 'Not Found' }} />
       <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn't exist.</Text>
-
+        <Text style={styles.emoji}>🌙</Text>
+        <Text style={styles.title}>Lost in the dark</Text>
+        <Text style={styles.subtitle}>This page doesn't exist.</Text>
         <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
+          <Text style={styles.linkText}>Go home →</Text>
         </Link>
       </View>
     </>
@@ -21,20 +23,27 @@ export default function NotFoundScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: colors.midnight,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    gap: spacing[3],
   },
+  emoji: { fontSize: 48 },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: fonts.display,
+    fontSize: fontSizes['2xl'],
+    color: colors.pearl,
+    fontStyle: 'italic',
   },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
+  subtitle: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.base,
+    color: colors.nebula,
   },
+  link: { marginTop: spacing[4] },
   linkText: {
-    fontSize: 14,
-    color: '#2e78b7',
+    fontFamily: fonts.body,
+    fontSize: fontSizes.base,
+    color: colors.gold,
   },
 });
